@@ -1,2 +1,2 @@
 # botterino
-Il *nuovo* bot di @unimoreinginfo
+Il *nuovo* bot Telegram di @unimoreinginfo
