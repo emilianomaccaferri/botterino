@@ -1,0 +1,28 @@
+{
+    "welcome": [
+        "Ciao %name% e benvenuto/a su @unimoreinginfo!",
+        "Allora, sostanzialmente le regole sono tre:",
+        "1) Rispetta le altre persone",
+        "2) Non spammare",
+        "3) Se dici stonks verrai punito",
+        "Bene, ora che sai come ci si deve comportare su questo gruppo, ti auguro una buona permanenza",
+        "",
+        "- Botterino Balboni, il guardiano del gruppo"
+    ],
+    "syntax_error": [
+        "Sintassi errata.",
+        "La sintassi corretta è:",
+        "<b>%syntax%</b>"
+    ],
+    "stat": [
+        "Il voto finale è: <b>%vote%</b>",
+        "In particolare hai sbagliato:",
+        "- <b>%wrong_ex_1%</b> esercizi(o) e <b>%wrong_th_1%</b> domanda/e di teoria nella prima parte",
+        "- <b>%wrong_ex_2%</b> esercizi(o) e <b>%wrong_th_2%</b> domanda/e di teoria nella seconda parte"
+    ],
+    "about_me": [
+        "Bot \"ufficiale\" del gruppo @unimoreinginfo",
+        "<a href=\"https://github.com/emilianomaccaferri/botterino\">Codice sorgente</a>",
+        "Sviluppato e mantenuto da Emiliano Maccaferri"
+    ]
+}
