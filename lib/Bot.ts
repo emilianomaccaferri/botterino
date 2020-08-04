@@ -27,7 +27,6 @@ export class Bot{
         this.#bot.launch();
         this.#bot.on('new_chat_members', this.handleNewChatMembers)
         this.#bot.on('text', this.handleMessage);
-        let exams = await fetchExams();
 
     }
 
