@@ -1,35 +1,83 @@
-import { Telegraf, Context } from 'telegraf'
-import { Exams, Exam } from './typings'
+import { Exams, Exam, Solution } from './typings/index'
+import { CmdArgs, Result, Commands } from './typings/messages'
 import {
     messages,
     tokenize,
     partial,
-    fetchExams
+    fetchExams,
+    fetchSolutions
 } from "./utils"
-interface Result{
-    text: string,
-    variables?: {[key: string]: string}[]
-}
-interface Commands{
-    [name: string]: Command
-}
-interface Command{
-    desc: string,
-    exec: (args?: CmdArgs) => (Promise<Result> | Result)
-}
-export interface CmdArgs{
-    bot: any,
-    message_obj: any,
-    command_args: string[]
+
+let solutions: {[index: string]: string} = {
+    "fdi1": "esami-fdi1",
+    "fdi2": "esami-fdi2"
 }
 
 const commands: Commands = {
+    "soluzioni":{
+        "desc": "soluzioni delle esercitazioni/esami che abbiamo fatto",
+        exec: async(arg): Promise<Result> => {
+
+
+            let args = arg!.command_args!;
+            let solution_type = args[0];
+
+            if(!args.length)
+                return {
+                    text: tokenize(<string>messages.syntax_error.join("\n"), [{
+                        "syntax": "!soluzioni nome_materia nome_soluzione (opzionale)"
+                    }])
+                }
+
+            if(!(solution_type in solutions))
+                return {
+                    text: `Materia non trovata.\nLa lista delle materie disponibili è: <b>${Object.keys(solutions).join(", ")}</b>`
+                }
+            
+            try{
+
+                let sol = (await fetchSolutions(solutions[solution_type], args[1])) as Solution[];
+                let text = (sol.length  > 0) ? `Soluzioni per la ricerca <b>${solutions[solution_type]}</b>:\n` : "Nessuna soluzione trovata."
+
+                sol.forEach((solution: Solution) => {
+
+                    text +=  `<a href="${solution.url}">${solution.name}</a>, `
+
+                })
+
+                text = text.slice(0, -2)
+                if(args[1]) text += '\n\nNon ti sembra quello che cercavi? Prova ad usare "-" al posto degli spazi!'
+
+                return {
+                    text
+                }
+            
+            }catch(err){
+
+                return {
+                    text: `Qualcosa è andato storto durante il recupero delle soluzioni... Probabilmente ho ecceduto il rate limit di GitHub, ci sarà da aspettare un po'.`
+                }
+
+            }
+
+        }
+    },
     "about": {
         "desc": "un po' di cose su di me",
         exec: (): Result => {
 
             return {
                 text: messages.about_me.join("\n")
+            }
+
+        }
+    },
+    "brainlet": {
+        "desc": "manda il grande brainlet",
+        exec: (): Result => {
+
+            return {
+                text: "https://static.emilianomaccaferri.com/brainlet.jpg"
             }
 
         }

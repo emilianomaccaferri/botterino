@@ -21,3 +21,15 @@ export interface Exam{
 export type Exams = {
     [name: string]: Exam[]
 }
+export interface GitHubTreeNode{
+    path: string,
+    mode: string,
+    type: string,
+    sha: string,
+    size: number,
+    url: string
+}
+export interface Solution {
+    name: string,
+    url: string
+};

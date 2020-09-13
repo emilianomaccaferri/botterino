@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "tsc": "tsc",
+    "daemonized": "~/.npm-global/bin/tsc && pm2 start process.json",
     "bot": "~/.npm-global/bin/tsc && node ./build/bot.js"
   },
   "repository": {

@@ -1,0 +1,10 @@
+{
+    "script": "./build/bot.js",
+    "watch": true,
+    "watch_options": {
+        "followSymlinks": false
+    },
+    "node_args": [],
+    "name": "botterino"
+}
+

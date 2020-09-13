@@ -2,7 +2,7 @@ import { Telegraf, Context } from 'telegraf'
 import {
     BotConfig,
     Command
-} from './typings/index'
+} from './typings'
 import {
     reply
 } from './utils'

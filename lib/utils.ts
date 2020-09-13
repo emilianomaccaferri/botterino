@@ -1,6 +1,6 @@
 import * as fs from 'fs-extra'
-import { Exams } from "./typings"
-import { Reply, Variable, Markup } from "./typings/messages.d";
+import { Exams, Solution, GitHubTreeNode } from "./typings"
+import { Reply, Variable } from "./typings/messages.d";
 import axios, { AxiosResponse, AxiosError } from "axios";
 import cheerio from 'cheerio'
 import qs from 'qs'
@@ -13,6 +13,70 @@ axios.defaults.headers = {
 }
 
 export const messages = JSON.parse(fs.readFileSync('./messages.json').toString());
+
+export const fetchSolutions = async function(subject: string, solution_name?: string): Promise<Solution[] | AxiosError>{
+
+    try{
+
+        let response = await axios({
+            method: 'GET',
+            url: `https://api.github.com/repos/unimoreinginfo/${subject}/git/trees/master?recursive=1`
+        });
+
+        let sols = response.data.tree;
+        let result: Solution[] = new Array(); 
+
+        switch(subject){
+
+            case 'esami-fdi1':
+            case 'esami-fdi2':
+
+                let filter: RegExp = /esame-\d+$/;
+
+                if(solution_name)
+                    filter = new RegExp(`esame-\\d+\/([a-z-0-9-_]*${solution_name}[a-z-0-9-_]*\/)$`);
+
+                let filtered: Solution[] = new Array();
+                sols.forEach((solution: GitHubTreeNode) => {
+
+                    let to_filter = solution.path;
+                    if(solution_name)
+                        to_filter = solution.path + '/'
+
+                    if(filter.test(to_filter)){
+
+                        let s: string = "";
+                        if(solution_name)
+                            s = filter.exec(to_filter)![1];
+
+                        let exam_name: string = solution.path.split("/")[0],
+                            solution_url: string = `https://github.com/unimoreinginfo/${subject}/tree/master/${exam_name}/${s || ""}`     
+
+                        filtered.push({
+                            name: solution.path,
+                            url: solution_url
+                        })
+                    }
+
+                })
+
+                result = filtered;                    
+
+            break;
+
+        }
+        
+        return result;
+
+    }catch(err){
+
+        console.log("asassaasass");
+        
+        return Promise.reject(err);
+    
+    }
+
+}
 
 export const fetchExams = async function(): Promise<Exams | AxiosError>{
 
