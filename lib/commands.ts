@@ -1,5 +1,6 @@
 import { Exams, Exam, Solution } from './typings/index'
 import { CmdArgs, Result, Commands } from './typings/messages'
+import { Bot } from './Bot'
 import {
     messages,
     tokenize,
@@ -14,10 +15,48 @@ let solutions: {[index: string]: string} = {
 }
 
 const commands: Commands = {
+    "ban": {
+        admin_only: true,
+        desc: "Banna l'utente al quale si risponde",
+        exec: async(args): Promise<Result> => {
+
+            let message = args!.message_obj;
+            let sender = message.from.id;
+            let bot = args!.bot;          
+
+            console.log(sender in Bot.admins);
+            
+
+            if(!Bot.admins.includes(sender as number))
+                return { text: "senta lei, cosa sta cercando di fare?" }
+
+            if("reply_to_message" in message){
+                let user_id = message.reply_to_message.from.id;
+                let name = message.reply_to_message.from.name;
+                let chat_id = message.reply_to_message.chat.id;
+
+                bot.telegram.kickChatMember(chat_id, user_id, { until_date: 0 });
+
+                return {
+
+                    text: "addio"
+
+                }
+
+            }
+
+            return {
+
+                text: "rispondi ad un messaggio per bannare"
+
+            }
+
+
+        }
+    },
     "soluzioni":{
         "desc": "soluzioni delle esercitazioni/esami che abbiamo fatto",
         exec: async(arg): Promise<Result> => {
-
 
             let args = arg!.command_args!;
             let solution_type = args[0];
@@ -238,7 +277,8 @@ const commands: Commands = {
             Object.keys(commands)
                 .forEach(cmd => {
 
-                    message.push(`- <b>!${cmd}</b>: ${commands[cmd].desc}`)
+                    if(!commands[cmd].admin_only)
+                        message.push(`- <b>!${cmd}</b>: ${commands[cmd].desc}`)
 
                 })
 

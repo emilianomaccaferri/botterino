@@ -1,7 +1,7 @@
 import { Telegraf, Context } from 'telegraf'
 import {
     BotConfig,
-    Command
+    ForwardedCommand
 } from './typings'
 import {
     reply
@@ -9,17 +9,20 @@ import {
 import {
     execute
 } from './commands'
-import * as commands from './commands'
-import { fetchExams } from './utils'
+import {
+    readFileSync
+} from 'fs-extra'
 
 export class Bot{
 
     #cfg: BotConfig;
     #bot: any;
+    static admins: number[];
 
     constructor(cfg: BotConfig){
         this.#cfg = cfg;
         this.#bot = new Telegraf(this.#cfg.token);
+        Bot.admins = this.#cfg.admins as number[];
     }
 
     async init(){
@@ -27,7 +30,6 @@ export class Bot{
         this.#bot.launch();
         this.#bot.on('new_chat_members', this.handleNewChatMembers)
         this.#bot.on('text', this.handleMessage);
-
     }
 
     handleNewChatMembers = async(context: any): Promise<void> => {
@@ -52,7 +54,7 @@ export class Bot{
 
     }
 
-    handleCommand = async(obj: Command): Promise<void> => {
+    handleCommand = async(obj: ForwardedCommand): Promise<void> => {
 
         let split = obj.text.split(" ");
         let response = await execute(split[0], {

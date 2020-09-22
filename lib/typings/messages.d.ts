@@ -26,5 +26,6 @@ export interface Commands{
 }
 export interface Command{
     desc: string,
-    exec: (args?: CmdArgs) => (Promise<Result> | Result)
+    exec: (args?: CmdArgs) => (Promise<Result> | Result),
+    admin_only?: boolean
 }

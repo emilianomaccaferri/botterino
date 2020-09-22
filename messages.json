@@ -24,5 +24,6 @@
         "Bot \"ufficiale\" del gruppo @unimoreinginfo",
         "<a href=\"https://github.com/emilianomaccaferri/botterino\">Codice sorgente</a>",
         "Sviluppato e mantenuto da Emiliano Maccaferri"
-    ]
+    ],
+    "ban_message": "È stato un piacere %name%, ma le nostre strade si dividono ora"
 }

@@ -3,13 +3,14 @@ import { Context } from "telegraf";
 export interface BotConfig{
     token: string,
     esse3_username: string,
-    esse3_password: string
+    esse3_password: string,
+    admins: number[]
 }
-export interface Command{
+export interface ForwardedCommand{
     bot: any,
     message: any,
     text: string,
-    context: Context
+    context: Context,
 }
 export interface Exam{
     available: string, 
