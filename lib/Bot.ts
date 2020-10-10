@@ -12,6 +12,8 @@ import {
 import {
     readFileSync
 } from 'fs-extra'
+import axios from 'axios';
+import db from './db'
 
 export class Bot{
 
@@ -29,7 +31,33 @@ export class Bot{
         
         this.#bot.launch();
         this.#bot.on('new_chat_members', this.handleNewChatMembers)
-        this.#bot.on('text', this.handleMessage);
+        this.#bot.command('start', this.handleStart)
+    }
+
+    handleStart = async(context: any): Promise<void> => {
+        
+        let message = context.update.message.text;
+        let split = message.split(" ");
+        if(split.length == 1)
+            return;
+        
+        let user_id = split[1];
+
+        try{
+
+            let res = await axios.get(`https://fiorino.macca.cloud/user/${user_id}`);
+            if(res.data.success){               
+                await db.query('UPDATE users SET telegram_id = ? WHERE user_id = ?', [context.update.message.from.id, user_id])
+                context.reply(`Hey, benvenuto/a. Entra pure qui: https://t.me/joinchat/Arin7lLXsM3f92BR479HeQ`)
+            }
+            else
+                context.reply(`Non sei registato. Vai su https://fiorino.macca.cloud per saperne di più`);
+
+        }catch(err){
+            console.log(err);
+            context.reply('Qualcosa è andato storto, contatta @macca_ferri')
+            return; 
+        }
     }
 
     handleNewChatMembers = async(context: any): Promise<void> => {
