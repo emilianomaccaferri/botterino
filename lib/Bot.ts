@@ -4,7 +4,9 @@ import {
     ForwardedCommand
 } from './typings'
 import {
-    reply
+    reply,
+    Status,
+    verifyUser
 } from './utils'
 import {
     execute
@@ -32,6 +34,9 @@ export class Bot{
         this.#bot.launch();
         this.#bot.on('new_chat_members', this.handleNewChatMembers)
         this.#bot.command('start', this.handleStart)
+
+        
+
     }
 
     handleStart = async(context: any): Promise<void> => {
@@ -46,7 +51,7 @@ export class Bot{
         try{
 
             let res = await axios.get(`https://fiorino.macca.cloud/user/${user_id}`);
-            if(res.data.success){               
+            if(res.data.success){
                 await db.query('UPDATE users SET telegram_id = ? WHERE user_id = ?', [context.update.message.from.id, user_id])
                 context.reply(`Hey, benvenuto/a. Entra pure qui: https://t.me/joinchat/Arin7lLXsM3f92BR479HeQ`)
             }
@@ -62,7 +67,9 @@ export class Bot{
 
     handleNewChatMembers = async(context: any): Promise<void> => {
 
+        let group = await context.getChat();
         let work: Promise<void>[] = [];
+        let allowed: Promise<Status>[] = [];
         context.message.new_chat_members.forEach((member: any) => {
             let name;
             if(member.hasOwnProperty("username"))
@@ -70,6 +77,7 @@ export class Bot{
             else 
                 name = member.first_name;
 
+            allowed.push(verifyUser(member, name));
             work.push(reply({context: context, bot: this.#bot, message_obj: context.message, message: "welcome", variables: [{
                 "name": name
                 }
@@ -77,6 +85,17 @@ export class Bot{
 
         })
         
+        let allowed_users = await Promise.all(allowed);
+
+        allowed_users.forEach((user: Status, index: number) => {
+
+            if(!user.is_verified){
+                this.#bot.telegram.kickChatMember(group.id, user.user_id, { until_date: 40 });
+                this.#bot.telegram.sendMessage(group.id, `${user.name!} non ha verificato il suo account. È stato terminato/a.`);
+            }
+
+        })
+
         await Promise.all(work);
         return;
 

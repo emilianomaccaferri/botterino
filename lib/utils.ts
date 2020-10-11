@@ -4,12 +4,47 @@ import { Reply, Variable } from "./typings/messages.d";
 import axios, { AxiosResponse, AxiosError } from "axios";
 import cheerio from 'cheerio'
 import qs from 'qs'
+import db from './db'
+
+export interface Status{
+    is_verified: boolean,
+    user_id: number,
+    name?: string
+}
 
 axios.defaults.headers = {
   'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
   'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) Gecko/20100101 Firefox/72.0',
   'Referer': 'https://www.esse3.unimore.it/LoginInfo.do?menu_opened_cod=',
   'Content-Type': 'application/x-www-form-urlencoded'
+}
+
+export const verifyUser = async(user: any, name: string): Promise<Status> => {
+
+    try{
+        
+        let query = await db.query("SELECT * FROM users WHERE telegram_id = ?", [user.id]);
+        
+        if(query.results.length > 0)
+            return {
+                is_verified: true,
+                user_id: user.id
+            };
+        else return {
+            is_verified: false,
+            user_id: user.id,
+            name
+        };
+
+    }catch(err){
+
+        console.log(err);
+        return {
+            is_verified: false,
+            user_id: user.id
+        }
+    }
+
 }
 
 export const messages = JSON.parse(fs.readFileSync('./messages.json').toString());
