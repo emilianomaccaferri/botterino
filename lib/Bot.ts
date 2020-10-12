@@ -34,7 +34,7 @@ export class Bot{
         this.#bot.launch();
         this.#bot.on('new_chat_members', this.handleNewChatMembers)
         this.#bot.command('start', this.handleStart)
-	this.#bot.on('message', this.handleMessage);
+	    this.#bot.on('message', this.handleMessage);
         
 
     }
@@ -69,6 +69,7 @@ export class Bot{
     handleNewChatMembers = async(context: any): Promise<void> => {
 
         let group = await context.getChat();
+        let group_name = group.title;
         let work: Promise<void>[] = [];
         let allowed: Promise<Status>[] = [];
         context.message.new_chat_members.forEach((member: any) => {
@@ -80,7 +81,10 @@ export class Bot{
 
             allowed.push(verifyUser(member, name));
             work.push(reply({context: context, bot: this.#bot, message_obj: context.message, message: "welcome", variables: [{
-                "name": name
+                    "name": name
+                }, 
+                {
+                    "group_name": group_name
                 }
             ]}))
 

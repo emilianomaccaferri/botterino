@@ -1,6 +1,6 @@
 {
     "welcome": [
-        "Ciao %name% e benvenuto/a su @unimoreinginfo!",
+        "Ciao %name% e benvenuto/a su %group_name%!",
         "Allora, sostanzialmente le regole sono tre:",
         "1) Rispetta le altre persone",
         "2) Non spammare",
