@@ -34,7 +34,7 @@ export class Bot{
         this.#bot.launch();
         this.#bot.on('new_chat_members', this.handleNewChatMembers)
         this.#bot.command('start', this.handleStart)
-
+	this.#bot.on('message', this.handleMessage);
         
 
     }
@@ -53,7 +53,8 @@ export class Bot{
             let res = await axios.get(`https://fiorino.macca.cloud/user/${user_id}`);
             if(res.data.success){
                 await db.query('UPDATE users SET telegram_id = ? WHERE user_id = ?', [context.update.message.from.id, user_id])
-                context.reply(`Hey, benvenuto/a. Entra pure qui: https://t.me/joinchat/Arin7lLXsM3f92BR479HeQ`)
+
+                context.reply(`Hey, benvenuto/a. Ecco la lista di gruppi accessibile ${this.#cfg.groups.join("\n")}`);
             }
             else
                 context.reply(`Non sei registato. Vai su https://fiorino.macca.cloud per saperne di più`);

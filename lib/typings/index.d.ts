@@ -4,7 +4,8 @@ export interface BotConfig{
     token: string,
     esse3_username: string,
     esse3_password: string,
-    admins: number[]
+    admins: number[],
+    groups: string[]
 }
 export interface ForwardedCommand{
     bot: any,

@@ -18,7 +18,6 @@ const rl = readline.createInterface({
   output: process.stdout
 })
 
-
 // se starto con node
 rl.on('line', async(data: string) => {
     
